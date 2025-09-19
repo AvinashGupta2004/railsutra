@@ -2,7 +2,11 @@ import pandas as pd
 import numpy as np
 from .utils import get_trains_live_stn
 
-def get_live_stn(stn_code: str) -> pd.DataFrame:
+pd.set_option('display.max_rows',None)
+pd.set_option('display.max_columns',None)
+pd.set_option('display.width',None)
+
+def get_live_stn_status(stn_code: str) -> pd.DataFrame:
     try:
         trains = get_trains_live_stn(stn_code)
         dtf = pd.DataFrame(

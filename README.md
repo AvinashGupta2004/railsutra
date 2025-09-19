@@ -44,13 +44,7 @@ Fetch all trains running between two stations. Returns a pandas DataFrame with t
 - **flex_stn** *(optional)* : Set **True** to allow flexible station matching.
 
 ```python
-import pandas as pd
 from railsutra import *
-
-# following to be done for full DataFrame view.
-pd.set_option('display.max_rows',None)
-pd.set_option('display.max_columns',None)
-pd.set_option('display.width',None)
 
 dtf = get_trains_btw_stns('GKP','LJN',flex_stn=True)
 print(dtf)
@@ -63,20 +57,14 @@ print(dtf)
 ```
 ---
 
-#### **3. get_live_stn(stn_code: str) -> pandas.DataFrame**
+#### **3. get_live_stn_status(stn_code: str) -> pandas.DataFrame**
 Get live arrivals and departures for a station. Returns a **Pandas DataFrame** showing train number, train name, arrival time, departure time, platform, and delay info (if available).
 
 - **stn_code** : Station Code.
 ```python
-from railsutra import get_live_stn
-import pandas as pd
+from railsutra import get_live_stn_status
 
-# following to be done for full DataFrame view.
-pd.set_option('display.max_rows',None)
-pd.set_option('display.max_columns',None)
-pd.set_option('display.width',None)
-
-dtf = get_live_stn(stn_code='cnb')
+dtf = get_live_stn_status(stn_code='cnb')
 print(dtf.head(3))
 ```
 ```terminal
@@ -90,6 +78,7 @@ print(dtf.head(3))
 Returns the name of the train.
 ```python
 from railsutra import get_train_name
+
 train_name = get_train_name(train_no=13010)
 print(train_name)
 ```
@@ -97,7 +86,7 @@ print(train_name)
 DOON EXPRESS
 ```
 ---
-#### **5. get_train_live_status(train_no, date: str, run_df: bool = False) -> dict**
+#### **5. get_live_train_status(train_no, date: str, run_df: bool = False) -> list**
 Fetches and returns the status of the train in dictionary format.
 
 - **train_no** : 5 digit train number.
@@ -106,26 +95,20 @@ Fetches and returns the status of the train in dictionary format.
 
 ##### 1. Getting status of the train.
 ```python
-from railsutra import get_train_live_status
-import pandas as pd
+from railsutra import get_live_train_status
 
-status_dict = get_train_live_status(train_no=12231,date="04-09-2025",run_df=True)
-print(status_dict['status']) # for status
+status = get_live_train_status(train_no=12231,date="04-09-2025",run_df=True)
+print(status[0]) # for status
 ```
 ```terminal
 Train has reached destination CHANDIGARH (CDG) at 10:13 05-Sep-2025.
 ```
 ##### 2. Whole running DataFrame.
 ```python
-from railsutra import get_train_live_status
-import pandas as pd
+from railsutra import get_live_train_status
 
-pd.set_option('display.max_rows',None)
-pd.set_option('display.max_columns',None)
-pd.set_option('display.width',None)
-
-status_dict = get_train_live_status(train_no=15031,date="04-09-2025",run_df=True)
-print(status_dict['running']) # for whole running DataFrame
+status = get_live_train_status(train_no=15031,date="04-09-2025",run_df=True)
+print(status[1]) # for whole running DataFrame
 ```
 ```terminal
         stn_name sch_arr      sch_dep exp_arr_time exp_arr_dt arr_delay exp_dep_time exp_dep_dt dep_delay
@@ -142,10 +125,39 @@ print(status_dict['running']) # for whole running DataFrame
 10    LUCKNOW NE   11:25  Destination        11:34     04 Sep         9  Destination        NaN       NaN
 ```
 ---
+#### **6. get_train_schedule(train_no:int) -> pandas.DataFrame**
+Returns the latest schedule of train.
+
+- **train_no** : 5 digit train number.
+
+```python
+from railsutra import get_train_schedule
+
+schedule = get_train_schedule(train_no=12566)
+print(schedule)
+```
+```terminal
+          stn_name sch_arr      sch_dep
+0        NEW DELHI  Source        12:45
+1   KANPUR CENTRAL   18:10        18:15
+2         UNNAO JN   18:42        18:43
+3         AISHBAGH   20:00        20:10
+4     BADSHAHNAGAR   20:30        20:33
+5         GONDA JN   22:26        22:28
+6     GORAKHPUR JN   00:50        01:00
+7     DEORIA SADAR   01:59        02:01
+8         SIWAN JN   02:55        03:00
+9          CHHAPRA   04:10        04:15
+10       SONPUR JN   05:18        05:20
+11      HAJIPUR JN   05:32        05:37
+12  MUZAFFARPUR JN   06:30        06:35
+13   SAMASTIPUR JN   07:48        08:13
+14    DARBHANGA JN   09:30  Destination
+```
 
 ## Notes
 - RailSutra uses **NTES - National Train Enquiry System** data. Schedules and status directly gets updated.
 - This package uses Internet Connectivity for fetching data, in absence of which will always return **Empty DataFrames**.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file in this distribution for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/AvinashGupta2004/railsutra/blob/main/LICENSE) file in this distribution for details.
